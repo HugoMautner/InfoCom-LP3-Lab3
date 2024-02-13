@@ -40,6 +40,9 @@
       if (status == 'idle'){
         color = 'green'
       }
+      if (status == 'waiting'){
+        color = 'yellow'
+      }
       if(circleNode == null){
         circleNode = doc_svg.createElementNS("http://www.w3.org/2000/svg", "circle");
         circleNode.setAttributeNS(null, 'cx', x);
