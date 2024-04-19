@@ -47,17 +47,21 @@ def route_planner():
         # Find an available drone in the database
         available_drone = None
         for drone_id in redis_server.hkeys("drones"):
-            status = redis_server.hget("drones", drone_id)['status']
+            drone_info = redis_server.hget("drones", drone_id)
+            drone_info_dict = json.loads(drone_info)  # Decode JSON string into a dictionary
+            status = drone_info_dict.get('status')
             if status == 'idle':
                 available_drone = drone_id
                 break
+
         
         if available_drone is None:
             message = 'No available drone, try later'
         else:
             # Get the IP address of the available drone
             drone_info = redis_server.hget("drones", available_drone)
-            drone_ip = json.loads(drone_info)['ip']
+            drone_info_dict = json.loads(drone_info)  # Decode JSON string into a dictionary
+            drone_ip = drone_info_dict['ip']
             DRONE_URL = 'http://' + drone_ip + ':5000'
 
             # Send coordinates to the URL of available drone

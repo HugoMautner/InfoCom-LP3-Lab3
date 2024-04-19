@@ -51,7 +51,7 @@ def get_drones():
     for drone_id, drone_info in drone_info_from_redis.items():
 
         # Decode the pickled data
-        decoded_info = pickle.loads(drone_info.encode())
+        decoded_info = json.loads(drone_info.encode())
 
         #retrieve the latitutde, longitude and status
         latitude = decoded_info['latitude']
