@@ -2,6 +2,11 @@ from flask import Flask, request
 from flask_cors import CORS
 import subprocess
 import  requests
+from simulator import idle
+from sense_hat import SenseHat
+sense = SenseHat()
+sense.clear()
+sense.low_light = True
 
 
 app = Flask(__name__)
@@ -10,11 +15,11 @@ app.secret_key = 'dljsaklqk24e21cjn!Ew@@dsa5'
 
 
 # temp id
-myID = "DRONE_0"
+myID = "DRONE_1"
 
 # Initial coords (set to 0 for now)
-current_longitude = 0
-current_latitude = 0
+current_longitude = 13.233290
+current_latitude = 55.715810
 
 
 # Set up dict of the drone's info, ip is added on server side
@@ -29,6 +34,8 @@ drone_info = {
 SERVER = "http://192.168.0.1:5001/drone"
 with requests.Session() as session:
     resp = session.post(SERVER, json=drone_info)
+    sense.clear()
+    sense.set_pixels(idle)
 
 
 # Function to read the last coordinates from the text file
@@ -43,11 +50,12 @@ def main():
     coords = request.json
 
     # Get the last coordinates from the text file
-    last_longitude, last_latitude = read_last_coordinates()
+    current_longitude = coords['current'][0]
+    current_latitude = coords['current'][1]
 
     # They are now our current position to be passed to the simulator
-    current_longitude = last_longitude
-    current_latitude = last_latitude
+    # current_longitude = last_longitude
+    # current_latitude = last_latitude
 
     # Start the simulator subprocess
     from_coord = coords['from']
@@ -60,4 +68,4 @@ def main():
     return 'New route received'
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=True, host='192.168.0.2')
